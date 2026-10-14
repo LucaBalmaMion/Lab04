@@ -25,3 +25,4 @@ class StandPremium(Stand):
     def __str__(self):
         return f'{super().__str__()}, Posizione {self.posizione}'
 
+

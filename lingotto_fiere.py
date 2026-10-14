@@ -1,10 +1,10 @@
 import csv
+from enum import nonmember
 
-import espositore
 from stand import Stand
 from stand import StandPremium
 from espositore import Espositore
-
+from operator import attrgetter
 
 class LingottoFiere:
     def __init__(self, nome):
@@ -13,7 +13,6 @@ class LingottoFiere:
         self.nome = nome
         self.listaStand = []
         self.listaEspositori = []
-        self.coppieStandEspositori = []
 
 
 
@@ -55,35 +54,30 @@ class LingottoFiere:
     def assegna_stand_a_espositore(self, codice_stand, codice_espositore):
         """Associa uno stand a un espositore"""
         # TODO
-        esisteStand = False
-        esisteEspositore = False
+        stand = None
+        espositore = None
+
         for el in self.listaStand:
             if el.codice == codice_stand:
-                esisteStand = True
                 stand = el
+
         for el in self.listaEspositori:
             if el.codice == codice_espositore:
-                esisteEspositore = True
                 espositore = el
-        standOccupato = False
-        espositoreOccupato = False
-        for el in self.coppieStandEspositori:
-            if el[0] == codice_stand:
-                standOccupato = True
-            if el[1] == codice_espositore:
-                espositoreOccupato = True
 
-        if not esisteStand:
+
+        if stand is None:
             raise Exception('stand non esistente')
-        if not esisteEspositore:
-            raise Exception('stand non esistente')
-        if standOccupato:
+        if espositore is None:
+            raise Exception('espositore non esistente')
+
+        if stand.espositore is not None:
             raise Exception('stand già occupato')
-        if espositoreOccupato:
+        if espositore.stand is not None:
             raise Exception('espositore già assegnato')
+
         stand.espositore = codice_espositore
         espositore.stand = stand
-        self.coppieStandEspositori.append([codice_stand, codice_espositore])
 
 
 
@@ -97,3 +91,5 @@ class LingottoFiere:
     def stand_ordinati_per_prezzo(self):
         """Restituisce la lista ordinata degli stand in base al prezzo"""
         # TODO
+        self.listaStand.sort(key=attrgetter('prezzo'))
+        return self.listaStand
